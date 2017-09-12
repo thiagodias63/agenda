@@ -10,7 +10,7 @@ if (isset($_POST['title']) && isset($_POST['start']) && isset($_POST['end'])){
 	$end = $_POST['end'];
 	$color = $_POST['color'];
 
-	$sql = "INSERT INTO eventos(title, start, end) values ('$title', '$start', '$end')";
+	$sql = "INSERT INTO events(title, start, end) values ('$title', '$start', '$end')";
 	//$req = $bdd->prepare($sql);
 	//$req->execute();
 	

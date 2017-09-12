@@ -1,22 +1,20 @@
 <?php
+require("_app/config.inc.php");
 require_once('bdd.php');
-$sql = "SELECT id, title, start, end FROM eventos ";
+$sql = "SELECT id, color, start, end FROM events";
 $req = $bdd->prepare($sql);
 $req->execute();
 $events = $req->fetchAll();
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Bare - Start Bootstrap Template</title>
+    <title>Agendamento</title>
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 	<!-- FullCalendar -->
@@ -39,6 +37,7 @@ $events = $req->fetchAll();
     <![endif]-->
 </head>
 <body>
+    
     <!-- Page Content -->
     <div class="container">
         <div class="row">
@@ -60,20 +59,80 @@ $events = $req->fetchAll();
 			  </div>
 			  <div class="modal-body">
 				
-				  <div class="form-group">
+				  <!--<div class="form-group">
 					<label for="title" class="col-sm-2 control-label">Title</label>
 					<div class="col-sm-10">
 					  <input type="text" name="title" class="form-control" id="title" placeholder="Title">
 					</div>
-				  </div>
+				  </div> -->
+				  
 				  <div class="form-group">
-					<label for="start" class="col-sm-2 control-label">Start date</label>
+					<label for="start" class="col-sm-2 control-label">Cliente</label>
+					<div class="col-sm-10">
+					<select name="id_cliente" class="form-control" id="id_cliente">
+					  <?php 
+					  		$read = new Read;
+					  		$read->ExeRead("cliente");
+					  		$clientes = $read->getResult();
+					  		foreach($clientes as $cliente){?>
+					  			<option value="<?= $cliente['id_cliente'] ?>"> <?= $cliente['nome'] ?></option>
+					  		<?php }
+					  	?>
+					</select>
+					</div>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="title" class="col-sm-2 control-label">Serviço</label>
+					
+					<table>
+					  <tr>
+					  	<div class="col-sm-6"><select name="id_servico" class="form-control" id="id_servico">
+					  	<?php 
+					  		$read = new Read;
+					  		$read->ExeRead("servicos");
+					  		$servicos = $read->getResult();
+					  		foreach($servicos as $servico){?>
+					  			<option value="<?= $servico['id_servico'] ?>"> <?= $servico['nome'] ?></option> 
+					  		<?php }
+					  	?>
+					  	</select></div>
+					  	<td><div class="col-sm-12"><input type="number" class="form-control"></div></td>
+					  </tr>
+					</table>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="title" class="col-sm-2 control-label">Tipo</label>
+					<div class="col-sm-10">
+					  <input type="radio" name="id_servico" id="id_servico" value="P.O">Pedido Orçamentos 
+					  <input type="radio" name="id_servico" id="id_servico" value="S.S" checked>Solicitação de Serviço
+					</div>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="title" class="col-sm-2 control-label">Funcionarios</label>
+					<div class="col-sm-10">
+					  	<?php 
+					  		$read = new Read;
+					  		$read->ExeRead("funcionarios");
+					  		$funcionarios = $read->getResult();
+					  		foreach($funcionarios as $funcionario){?>
+					  			<input type="checkbox"  name="funcionario[<?= $funcionario['id_funcionario'] ?>]" value="<?= $funcionario['id_funcionario'] ?>"> <?= $funcionario['nome'] ?>
+					  		<?php }
+					  	?>
+					  </div>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="start" class="col-sm-2 control-label">Horario Inicio</label>
 					<div class="col-sm-10">
 					  <input type="datetime-local" name="start" class="form-control" id="start">
 					</div>
 				  </div>
+				  
 				  <div class="form-group">
-					<label for="end" class="col-sm-2 control-label">End date</label>
+					<label for="end" class="col-sm-2 control-label">Horario Fim</label>
 					<div class="col-sm-10">
 					  <input type="datetime-local" name="end" class="form-control" id="end">
 					</div>
@@ -123,6 +182,7 @@ $events = $req->fetchAll();
 		</div>
 	</div>
     <!-- /.container -->
+    
     <!-- jQuery Version 1.11.1 -->
     <script src="js/jquery.js"></script>
     <!-- Bootstrap Core JavaScript -->
@@ -142,7 +202,7 @@ $events = $req->fetchAll();
 			},
 			allDaySlot: false,
 			defaultView: 'agendaWeek',
-			defaultDate: '2017-07-28',
+			defaultDate: '2017-09-12',
 			editable: true,
 			eventLimit: true, // allow "more" link when too many events
 			nowIndicator:true,
@@ -183,7 +243,32 @@ $events = $req->fetchAll();
 			?>
 				{
 					id: '<?php echo $event['id']; ?>',
-					title: '<?php echo $event['title']; ?>',
+					title: '<?php
+								require_once('bdd.php');
+								$tsql = "SELECT nome FROM cliente c JOIN events e ON c.id_cliente = e.id_cliente WHERE e.id = {$event['id']}";
+								$req = $bdd->prepare($tsql);
+								$req->execute();
+								$titles = $req->fetchAll();
+								foreach($titles as $title){
+									echo $title['nome'];
+								}
+								$tsql = "SELECT nome FROM servicos s JOIN servicos_ss ss ON ss.id_servico = s.id_servico WHERE ss.id_agendamento = {$event['id']}";
+								$req = $bdd->prepare($tsql);
+								$req->execute();
+								$titles = $req->fetchAll();
+								foreach($titles as $title){
+									echo " " . $title['nome'];
+								}
+								
+								$tsql = "SELECT SUM(preco_servico) AS'total' FROM servicos s JOIN servicos_ss ss ON ss.id_servico = s.id_servico WHERE ss.id_agendamento = {$event['id']}";
+								$req = $bdd->prepare($tsql);
+								$req->execute();
+								$titles = $req->fetchAll();
+								foreach($titles as $title){
+									echo " RS" . $title['total'] . ",00";
+								}
+					?>',
+					color: '<?php echo $event['color']; ?>',
 					start: '<?php echo $start; ?>',
 					end: '<?php echo $end; ?>',
 				},
