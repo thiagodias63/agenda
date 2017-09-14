@@ -2,9 +2,12 @@
 require("_app/config.inc.php");
 require_once('bdd.php');
 $sql = "SELECT id, color, start, end FROM events";
-$req = $bdd->prepare($sql);
-$req->execute();
-$events = $req->fetchAll();
+$read = new Read;
+$read->ExeRead("events");
+$events = $read->getResult();
+//$req = $bdd->prepare($sql);
+//$req->execute();
+//$events = $req->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -97,7 +100,7 @@ $events = $req->fetchAll();
 					  		<?php }
 					  	?>
 					  	</select></div>
-					  	<td><div class="col-sm-12"><input type="number" class="form-control"></div></td>
+					  	<td><div class="col-sm-12"><input type="number" class="form-control" name="preco_servico"></div></td>
 					  </tr>
 					</table>
 				  </div>
@@ -105,8 +108,8 @@ $events = $req->fetchAll();
 				  <div class="form-group">
 					<label for="title" class="col-sm-2 control-label">Tipo</label>
 					<div class="col-sm-10">
-					  <input type="radio" name="id_servico" id="id_servico" value="P.O">Pedido Orçamentos 
-					  <input type="radio" name="id_servico" id="id_servico" value="S.S" checked>Solicitação de Serviço
+					  <input type="radio" name="tipo" id="id_servico" value="P.O">Pedido Orçamentos 
+					  <input type="radio" name="tipo" id="id_servico" value="S.S" checked>Solicitação de Serviço
 					</div>
 				  </div>
 				  
@@ -118,7 +121,7 @@ $events = $req->fetchAll();
 					  		$read->ExeRead("funcionarios");
 					  		$funcionarios = $read->getResult();
 					  		foreach($funcionarios as $funcionario){?>
-					  			<input type="checkbox"  name="funcionario[<?= $funcionario['id_funcionario'] ?>]" value="<?= $funcionario['id_funcionario'] ?>"> <?= $funcionario['nome'] ?>
+					  			<input type="checkbox"  name="<?= $funcionario['nome'] ?>" value="<?= $funcionario['id_funcionario'] ?>"> <?= $funcionario['nome'] ?>
 					  		<?php }
 					  	?>
 					  </div>
@@ -157,10 +160,48 @@ $events = $req->fetchAll();
 				<h4 class="modal-title" id="myModalLabel">Edit Event</h4>
 			  </div>
 			  <div class="modal-body">
-				  <div class="form-group">
-					<label for="title" class="col-sm-2 control-label">Title</label>
+					<div class="form-group">
+						<label for="start" class="col-sm-2 control-label">Cliente</label>
 					<div class="col-sm-10">
-					  <input type="text" name="title" class="form-control" id="title" placeholder="Title">
+					<select name="id_cliente" class="form-control" id="id_cliente">
+					</select>
+					</div>
+				  </div>
+				  <div class="form-group">
+					<label for="title" class="col-sm-2 control-label">Serviço</label>
+					<table>
+					  <tr>
+					  	<div class="col-sm-6"><select name="id_servico" class="form-control" id="id_servico"></div>
+					  	<td><div class="col-sm-12"><input type="number" class="form-control" name="preco_servico"></div></td>
+					  </tr>
+					</table>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="title" class="col-sm-2 control-label">Tipo</label>
+					<div class="col-sm-10">
+					  <input type="radio" name="tipo" id="id_servico" value="P.O">Pedido Orçamentos 
+					  <input type="radio" name="tipo" id="id_servico" value="S.S" checked>Solicitação de Serviço
+					</div>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="title" class="col-sm-2 control-label">Funcionarios</label>
+					<div class="col-sm-10">
+					  </div>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="start" class="col-sm-2 control-label">Horario Inicio</label>
+					<div class="col-sm-10">
+					  <input type="datetime-local" name="start" class="form-control" id="start">
+					</div>
+				  </div>
+				  
+				  <div class="form-group">
+					<label for="end" class="col-sm-2 control-label">Horario Fim</label>
+					<div class="col-sm-10">
+					  <input type="datetime-local" name="end" class="form-control" id="end">
 					</div>
 				  </div>
 				  <div class="form-group"> 
@@ -216,7 +257,7 @@ $events = $req->fetchAll();
 			eventRender: function(event, element) {
 				element.bind('dblclick', function() {
 					$('#ModalEdit #id').val(event.id);
-					$('#ModalEdit #title').val(event.title);
+					//$('#ModalEdit #title').val(event.title);
 					$('#ModalEdit').modal('show');
 				});
 			},
@@ -233,12 +274,12 @@ $events = $req->fetchAll();
 				if($start[1] == '00:00:00'){
 					$start = $start[0];
 				}else{
-					$start = $event['start'];
+					$start = $event['start'];//.format('YYYY-MM-DD HH:mm:ss');
 				}
 				if($end[1] == '00:00:00'){
 					$end = $end[0];
 				}else{
-					$end = $event['end'];
+					$end = $event['end'];//.format('YYYY-MM-DD HH:mm:ss');
 				}
 			?>
 				{
@@ -287,7 +328,6 @@ $events = $req->fetchAll();
 			Event[0] = id;
 			Event[1] = start;
 			Event[2] = end;
-			
 			$.ajax({
 			 url: 'editEventDate.php',
 			 type: "POST",
