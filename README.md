@@ -1,7 +1,7 @@
-# FullCalendar-BS3-PHP-MySQL
-FullCalendar 2 integration with bootstrap, php and mysql
+# Testando para o desenvolvimento de uma agenda com vários serviços e nume
+Integrado com bootstrap, php and mysql
 
-## DEMO and Installtion
+## DEMO da biblioteca
 [demo](http://jamelbaz.com/non-classe/integration-de-fullcalendar2-php-mysql).
 
 ## License
