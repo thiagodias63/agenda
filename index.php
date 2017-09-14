@@ -160,58 +160,16 @@ $events = $read->getResult();
 				<h4 class="modal-title" id="myModalLabel">Edit Event</h4>
 			  </div>
 			  <div class="modal-body">
-					<div class="form-group">
-						<label for="start" class="col-sm-2 control-label">Cliente</label>
-					<div class="col-sm-10">
-					<select name="id_cliente" class="form-control" id="id_cliente">
-					</select>
-					</div>
-				  </div>
-				  <div class="form-group">
-					<label for="title" class="col-sm-2 control-label">Serviço</label>
-					<table>
-					  <tr>
-					  	<div class="col-sm-6"><select name="id_servico" class="form-control" id="id_servico"></div>
-					  	<td><div class="col-sm-12"><input type="number" class="form-control" name="preco_servico"></div></td>
-					  </tr>
-					</table>
-				  </div>
-				  
-				  <div class="form-group">
-					<label for="title" class="col-sm-2 control-label">Tipo</label>
-					<div class="col-sm-10">
-					  <input type="radio" name="tipo" id="id_servico" value="P.O">Pedido Orçamentos 
-					  <input type="radio" name="tipo" id="id_servico" value="S.S" checked>Solicitação de Serviço
-					</div>
-				  </div>
-				  
-				  <div class="form-group">
-					<label for="title" class="col-sm-2 control-label">Funcionarios</label>
-					<div class="col-sm-10">
-					  </div>
-				  </div>
-				  
-				  <div class="form-group">
-					<label for="start" class="col-sm-2 control-label">Horario Inicio</label>
-					<div class="col-sm-10">
-					  <input type="datetime-local" name="start" class="form-control" id="start">
-					</div>
-				  </div>
-				  
-				  <div class="form-group">
-					<label for="end" class="col-sm-2 control-label">Horario Fim</label>
-					<div class="col-sm-10">
-					  <input type="datetime-local" name="end" class="form-control" id="end">
-					</div>
-				  </div>
-				  <div class="form-group"> 
+			  		<input type="hidden" name="id" class="form-control" id="id">
+			  		<textarea name="title" class="form-control" id="title" disabled="disabled"> </textarea>
+			  		
+			  		<div class="form-group"> 
 						<div class="col-sm-offset-2 col-sm-10">
 						  <div class="checkbox">
 							<label class="text-danger"><input type="checkbox"  name="delete"> Delete event</label>
 						  </div>
 						</div>
 					</div>
-				  <input type="hidden" name="id" class="form-control" id="id">
 			  </div>
 			  <div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -257,7 +215,7 @@ $events = $read->getResult();
 			eventRender: function(event, element) {
 				element.bind('dblclick', function() {
 					$('#ModalEdit #id').val(event.id);
-					//$('#ModalEdit #title').val(event.title);
+					$('#ModalEdit #title').val(event.title);
 					$('#ModalEdit').modal('show');
 				});
 			},
